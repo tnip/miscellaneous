@@ -1,0 +1,26 @@
+weather(){
+        # Usage:
+        # weather 13210
+        # weather syracuse ny
+        # weather "new york" ny
+        # weather nyc
+ 
+        if [ $2 ]
+        then
+                1=$(echo "$1" | sed -e "s/ /_/g")
+                WEATHER=$(curl --silent "http://rss.wunderground.com/auto/rss_full/$2/$1.xml?units=english")
+        else
+                WEATHER=$(curl --silent "http://rss.wunderground.com/auto/rss_full/$1.xml?units=english")
+        fi
+ 
+        $(echo $WEATHER | grep -qi 'not found')
+ 
+        if [ $? -eq "0" ]
+        then
+                echo "Invalid parameters."
+        else
+                TITLES=$(echo $WEATHER | grep -ie "title" | sed -Ee 's/[<>]\/?title[<>]//g')
+                echo $TITLES | head -n1 | rev | cut -d' ' -f4- | rev
+                echo $TITLES | grep -iEe "(?:Current|Statement|Advisory|Watch|Warning)"
+        fi
+}
