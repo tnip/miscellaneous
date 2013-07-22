@@ -4,6 +4,7 @@ weather(){
         # weather syracuse ny
         # weather "new york" ny
         # weather nyc
+        # weather boston ma
  
         if [ $2 ]
         then
