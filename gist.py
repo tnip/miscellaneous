@@ -1,3 +1,4 @@
+import sys
 import tempfile
 from subprocess import call
 import os.path
@@ -9,7 +10,7 @@ from requests.auth import HTTPBasicAuth
 EDITOR = os.environ.get("EDITOR", "vim")
 
 # Nabbed from here: https://github.com/settings/applications#personal-access-tokens
-GITHUB_PAC = "" 
+GITHUB_PAC = ""
 
 with tempfile.NamedTemporaryFile(suffix=".tmp") as temp:
     # Fire up vim
@@ -18,7 +19,15 @@ with tempfile.NamedTemporaryFile(suffix=".tmp") as temp:
     # Get the tempfile contents + filename
     f = open(temp.name, 'r')
     c = f.read()
-    filename = os.path.split(temp.name)[1]
+
+    # If we don't have a second param, then we use the
+    #   randomly generated tempfile name as the gist's
+    #   name. Otherwise, we use the second param as
+    #   the gist's name.
+    if len(sys.argv) < 2:
+        filename = os.path.split(temp.name)[1]
+    else:
+        filename = sys.argv[1]
 
     # Build request dict and JSONify it
     files = { filename: { "content" : c } }
